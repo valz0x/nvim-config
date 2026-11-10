@@ -253,22 +253,6 @@ return {
 					init_options = { clangdFileStatus = true },
 					filetypes = { "c", "cpp" },
 				},
-				roslyn = {
-					filetypes = { "cs", "razor", "razor,cs,cshtml", "cshtml" },
-					settings = {
-						["csharp|inlay_hints"] = {
-							csharp_enable_inlay_hints_for_implicit_object_creation = true,
-							csharp_enable_inlay_hints_for_implicit_variable_types = true,
-						},
-						["csharp|code_lens"] = {
-							dotnet_enable_references_code_lens = true,
-						},
-						["csharp|background_analysis"] = {
-							dotnet_analyzer_diagnostics_scope = "openfiles",
-							dotnet_compiler_diagnostics_scope = "openfiles",
-						},
-					},
-				},
 			}
 			-- Setup Mason and install tools
 			require("fidget").setup()
@@ -311,15 +295,23 @@ return {
 			end
 			-- roslyn.nvim
 			vim.lsp.config("roslyn", {
+				capabilities = capabilities,
 				on_attach = on_attach,
-				filetypes = { "cs", "razor", "razor,cs,cshtml", "cshtml" },
+				filetypes = { "cs", "razor", "cshtml" },
 				settings = {
 					["csharp|inlay_hints"] = {
 						csharp_enable_inlay_hints_for_implicit_object_creation = true,
 						csharp_enable_inlay_hints_for_implicit_variable_types = true,
+						csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+						csharp_enable_inlay_hints_for_types = true,
 					},
 					["csharp|code_lens"] = {
 						dotnet_enable_references_code_lens = true,
+						dotnet_enable_tests_code_lens = true,
+					},
+					["csharp|completion"] = {
+						dotnet_show_completion_items_from_unimported_namespaces = true,
+						dotnet_show_name_completion_suggestions = true,
 					},
 					["csharp|background_analysis"] = {
 						dotnet_analyzer_diagnostics_scope = "openfiles",

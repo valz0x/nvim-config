@@ -27,20 +27,24 @@ J or gJ
 :cdo /text/box/ | update cfdo
 unimpaired
 _ ,0 ,$ ,^ ,W ,B , vE , { ,},H,M,L
-=======
+
+──────
+
+### 1. Searching Keybindings
 
 In your Neovim setup, you have several ways to search keybindings:
 
 • Telescope Keymaps (Interactive Fuzzy Search):
 Run the command:
 :Telescope keymaps
-This opens a fuzzy-finder listing every registered mapping across modes along with its description.(Optional shortcut): You
-can bind this in telescope.lua:
+This opens a fuzzy-finder listing every registered mapping across modes along with its description.
+Shortcut:
 vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find keymaps" })
 
 • Which-Key:
 You already have which-key.nvim installed. In normal mode, press any prefix key (such as <Space> or z) and pause for a moment
 to see an interactive popup of available completions.
+
 • Vim Built-in Command:
 To inspect or query mappings for a specific key:
 :verbose nmap z
@@ -61,12 +65,13 @@ Neovim uses the standard z commands for folding:
 | zM         | Close all folds in the current file                      |
 | zr / zm    | Open / close folds incrementally by one level            |
 | zj / zk    | Jump to the next / previous fold                         |
-| ──────     |
+
+──────
 
 ### 3. Why Code is Folded by Default & How to Fix It
 
 Why it's happening:
-In treesitter.lua:38-39, an autocmd enables Treesitter fold expressions:
+In treesitter.lua, an autocmd enables Treesitter fold expressions:
 
     vim.wo[0][0].foldmethod = "expr"
     vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
@@ -79,20 +84,45 @@ Add the following options to set.lua:
     vim.opt.foldlevel = 99
     vim.opt.foldlevelstart = 99
 
-This keeps all folds expanded by default when you open files, while still allowing you to fold/unfold on demand with za or
-zM.
+This keeps all folds expanded by default when you open files, while still allowing you to fold/unfold on demand with za or zM.
+
+──────
+
+### 4. Replacing Words & Registers
 
 // replacing word method 1
 *(star) on word will give you all words under your cursor
 C = change motion
-ciw, enter,n(next),.(dot-to redo the action)
+ciw, enter, n (next), . (dot - to redo the action)
+
 // method 2
 :%s/Post/Pots/gc
 
-// using registered
-"3p to paste from reg or "3y to yenk
+// using registers
+"3p to paste from reg or "3y to yank
 
 +Register - global register in os
-"y+
+"+y
 "%p
 :let @+=@%
+
+──────
+
+### 5. Arch Linux Setup
+
+To ensure every plugin, debugger, clipboard, and compiler works on Arch, install:
+
+    # 1. Neovim & build toolchain (for Tree-sitter & fzf-native compilation)
+    sudo pacman -S neovim gcc make ripgrep fd git
+
+    # 2. Clipboard integration (Required for unnamedplus / <leader>y)
+    # If using Wayland:
+    sudo pacman -S wl-clipboard
+    # If using X11:
+    sudo pacman -S xclip
+
+    # 3. Debuggers (for Rust, C, C++, and C#)
+    sudo pacman -S lldb
+    # For .NET / C# debugging (from AUR):
+    # yay -S netcoredbg
+    # or let Mason install it via :MasonInstall netcoredbg

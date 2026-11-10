@@ -12,24 +12,35 @@ return {
 				return
 			end
 
-			-- Installing/compiling parsers needs the `tree-sitter` CLI plus a C compiler.
-			-- Skip auto-install when they're missing so startup doesn't spam build errors;
-			-- `:TSInstall <lang>` still works once they're available.
-			local has_cc = vim.fn.executable("cc") == 1
-				or vim.fn.executable("gcc") == 1
-				or vim.fn.executable("clang") == 1
-				or vim.fn.executable("cl") == 1
-			if vim.fn.executable("tree-sitter") == 1 and has_cc then
-				treesitter.install({
-					"lua", "vim", "vimdoc", "query",
-					"markdown", "markdown_inline",
-					"bash", "regex", "diff",
-					"json", "yaml", "toml",
-					"html", "css", "javascript", "typescript", "tsx", "svelte",
-					"python", "go", "rust", "c", "cpp", "c_sharp", "php", "ocaml", "ocaml_interface",
-					"sql", "dockerfile", "gitignore", "gitcommit", "git_config",
-				})
+			-- Ensure nvim-treesitter runtime queries are in runtimepath
+			local ts_runtime = vim.fs.joinpath(vim.fn.stdpath("data"), "site", "pack", "core", "opt", "nvim-treesitter", "runtime")
+			if vim.fn.isdirectory(ts_runtime) == 1 then
+				vim.opt.rtp:append(ts_runtime)
 			end
+
+			-- Languages to install (excluding Neovim 0.12 bundled parsers: vim, vimdoc, c, lua, markdown, query)
+			local target_langs = {
+				"c_sharp", "rust", "cpp", "python", "go",
+				"javascript", "typescript", "tsx", "html", "css", "svelte",
+				"json", "yaml", "toml", "bash", "diff", "regex",
+				"sql", "dockerfile", "gitignore", "git_config", "php",
+			}
+
+			local function install_missing()
+				local needed = {}
+				for _, lang in ipairs(target_langs) do
+					if not vim.treesitter.language.add(lang) then
+						table.insert(needed, lang)
+					end
+				end
+				if #needed > 0 then
+					treesitter.install(needed)
+				end
+			end
+
+			vim.api.nvim_create_user_command("TSInstallMissing", install_missing, {
+				desc = "Install missing Tree-sitter parsers",
+			})
 
 			-- Highlighting is provided by core Neovim; nvim-treesitter only manages parsers now.
 			vim.api.nvim_create_autocmd("FileType", {

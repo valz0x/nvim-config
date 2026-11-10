@@ -27,7 +27,6 @@ local plugin_files = {
 	"noice",
 	"none-ls",
 	"nvim-dap",
-	"nvim-dap2",
 	"nvim-surround",
 	"obisidian",
 	"oil",
@@ -162,6 +161,11 @@ local function run_build_hook(hook, path)
 end
 
 function M.setup()
+	if not vim.pack then
+		vim.notify("vim.pack API is required for this config (Neovim 0.12+). Please use Neovim 0.12+ / nightly on Arch.", vim.log.levels.WARN)
+		return
+	end
+
 	vim.api.nvim_create_user_command("PackAdd", function(opts)
 		vim.pack.add(opts.fargs)
 	end, { desc = "Add a plugin", nargs = "+" })

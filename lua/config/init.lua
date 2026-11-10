@@ -6,16 +6,19 @@ require("config.remap")
 vim.opt.termguicolors = true
 -- message be buffer
 vim.o.cmdheight = 0
-require("vim._core.ui2").enable({
-	enable = true,
-	msg = {
-		target = "cmd",
-		pager = { height = 0.5 },
-		dialog = { height = 0.5 },
-		cmd = { height = 0.5 },
-		msg = { height = 0.5, timeout = 4500 },
-	},
-})
+local ok_ui2, ui2 = pcall(require, "vim._core.ui2")
+if ok_ui2 and ui2.enable then
+	ui2.enable({
+		enable = true,
+		msg = {
+			target = "cmd",
+			pager = { height = 0.5 },
+			dialog = { height = 0.5 },
+			cmd = { height = 0.5 },
+			msg = { height = 0.5, timeout = 4500 },
+		},
+	})
+end
 -- Rounded completion menu
 vim.opt.pumborder = "rounded"
 
@@ -56,12 +59,14 @@ autocmd({ "BufWritePre" }, {
 })
 
 function ColorMyPencils(color, noBg)
-	color = color or "catppuccin"
+	color = color or "kanagawa"
 	noBg = noBg or false
 	vim.cmd.colorscheme(color)
 	if noBg then
-		vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-		vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+		local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
+		local normal_float = vim.api.nvim_get_hl(0, { name = "NormalFloat" })
+		vim.api.nvim_set_hl(0, "Normal", vim.tbl_extend("force", normal, { bg = "none", ctermbg = "none" }))
+		vim.api.nvim_set_hl(0, "NormalFloat", vim.tbl_extend("force", normal_float, { bg = "none", ctermbg = "none" }))
 	end
 end
 function PickColorscheme()

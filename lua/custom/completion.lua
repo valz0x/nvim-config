@@ -13,11 +13,18 @@ require("luasnip.loaders.from_vscode").lazy_load()
 
 -- Diagnostic config
 vim.diagnostic.config({
+    underline = true,
+    signs = true,
+    severity_sort = true,
+    virtual_text = {
+        prefix = "●",
+        spacing = 4,
+    },
     float = {
         focusable = false,
         style = "minimal",
         border = "rounded",
-        source = if_many,
+        source = "if_many",
         header = "",
         prefix = "",
     },

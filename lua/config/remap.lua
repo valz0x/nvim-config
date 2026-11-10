@@ -52,7 +52,6 @@ map("n", "<leader>]", ":bnext<CR>", opts)
 
 -- Jump list navigation (VS Code style: Ctrl+- to jump back, Ctrl+= or Alt+Right to jump forward)
 map("n", "<C-->", "<C-o>", { desc = "Jump backward (jump list)" })
-map("n", "<C-_>", "<C-o>", { desc = "Jump backward (jump list, terminal)" })
 map("n", "<C-=>", "<cmd>execute 'normal! \\<lt>C-i>'<CR>", { desc = "Jump forward (jump list)" })
 map("n", "<M-Left>", "<C-o>", { desc = "Jump backward (jump list)" })
 map("n", "<M-Right>", "<cmd>execute 'normal! \\<lt>C-i>'<CR>", { desc = "Jump forward (jump list)" })
@@ -98,25 +97,21 @@ map("n", "<leader><leader>", function()
 	vim.cmd("so")
 end, { desc = "Source current file" })
 
-vim.api.nvim_set_keymap("n", "<F5>", '<Cmd>lua require"dap".continue()<CR>', { silent = true, desc = "Debug: continue" })
-vim.api.nvim_set_keymap("n", "<F10>", '<Cmd>lua require"dap".step_over()<CR>', { silent = true, desc = "Debug: step over" })
-vim.api.nvim_set_keymap("n", "<F11>", '<Cmd>lua require"dap".step_into()<CR>', { silent = true, desc = "Debug: step into" })
-vim.api.nvim_set_keymap("n", "<F12>", '<Cmd>lua require"dap".step_out()<CR>', { silent = true, desc = "Debug: step out" })
-vim.api.nvim_set_keymap("n", "<Leader>b", '<Cmd>lua require"dap".toggle_breakpoint()<CR>', { silent = true, desc = "Debug: toggle breakpoint" })
-vim.api.nvim_set_keymap(
-	"n",
-	"<Leader>B",
-	'<Cmd>lua require"dap".map_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>',
-	{ silent = true, desc = "Debug: conditional breakpoint" }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<Leader>lp",
-	'<Cmd>lua require"dap".map_breakpoint(nil, nil, vim.fn.input("Log point message: "))<CR>',
-	{ silent = true, desc = "Debug: log point" }
-)
-vim.api.nvim_set_keymap("n", "<Leader>dr", '<Cmd>lua require"dap".repl.open()<CR>', { silent = true, desc = "Debug: open REPL" })
-vim.api.nvim_set_keymap("n", "<Leader>dl", '<Cmd>lua require"dap".run_last()<CR>', { silent = true, desc = "Debug: run last" })
+vim.keymap.set("n", "<F5>", function() require("dap").continue() end, { desc = "Debug: continue" })
+vim.keymap.set("n", "<F10>", function() require("dap").step_over() end, { desc = "Debug: step over" })
+vim.keymap.set("n", "<F11>", function() require("dap").step_into() end, { desc = "Debug: step into" })
+vim.keymap.set("n", "<F12>", function() require("dap").step_out() end, { desc = "Debug: step out" })
+vim.keymap.set("n", "<Leader>b", function() require("dap").toggle_breakpoint() end, { desc = "Debug: toggle breakpoint" })
+vim.keymap.set("n", "<Leader>B", function()
+	require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
+end, { desc = "Debug: conditional breakpoint" })
+vim.keymap.set("n", "<Leader>lp", function()
+	require("dap").set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
+end, { desc = "Debug: log point" })
+vim.keymap.set("n", "<Leader>dr", function() require("dap").repl.open() end, { desc = "Debug: open REPL" })
+vim.keymap.set("n", "<Leader>dl", function() require("dap").run_last() end, { desc = "Debug: run last" })
+vim.keymap.set("n", "<Leader>dx", function() require("dap").terminate() end, { desc = "Debug: terminate session" })
+vim.keymap.set("n", "<Leader>du", function() require("dapui").toggle() end, { desc = "Debug: toggle UI" })
 vim.api.nvim_set_keymap(
 	"n",
 	"<Leader>ss",

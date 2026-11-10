@@ -37,8 +37,9 @@ end, { desc = "Grep for input" })
 vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find, { desc = "Fuzzy find in current buffer" })
 
 vim.keymap.set("n", "<leader>fa", function()
-    ---@diagnostic disable-next-line: param-type-mismatch
-    builtin.find_files({ cwd = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy") })
+    local pack_dir = vim.fs.joinpath(vim.fn.stdpath("data"), "site", "pack", "core", "opt")
+    local search_dir = vim.fn.isdirectory(pack_dir) == 1 and pack_dir or vim.fs.joinpath(vim.fn.stdpath("data"), "lazy")
+    builtin.find_files({ cwd = search_dir })
 end, { desc = "Find files in installed plugins" })
 
 vim.keymap.set("n", "<space>en", function()
